@@ -51,6 +51,7 @@ export default function useAuthUser () {
   }
 
   return {
+    use,
     login,
     loginWithSocialProvider,
     logout,
