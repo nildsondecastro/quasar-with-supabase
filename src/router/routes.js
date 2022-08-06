@@ -16,7 +16,10 @@ const routes = [
     children: [
       { path: 'me', name: 'me', component: () => import('pages/Me.vue') }
       //{ path: '', component: () => import('pages/IndexPage.vue') }
-    ]
+    ],
+    meta: {
+      requiresAuth: true //todas as rotas desse conjunto precisam de login para serem acessadas
+    }
   },
 
   // Always leave this as last one,
