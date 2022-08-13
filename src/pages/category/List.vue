@@ -15,7 +15,12 @@
           </span>
           <q-space />
 
-          <q-btn label="Add New" color="primary"
+          <q-btn 
+            label="Add New" 
+            color="primary"
+            icon="mdi-plus"
+            dense
+            :to="{ name: 'form-category' }"
           />
         </template>
 
