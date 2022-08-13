@@ -10,10 +10,11 @@
         <q-input 
           label="Name"
           v-model="form.name"
+          :rules="[val => (val && val.length > 0) || 'O nome é obrigatório']"
         />
 
         <q-btn 
-          label="Save"
+          :label="isUpdate ? 'Atualizar' : 'Save'"
           color="primary"
           class="full-width"
           rounded
@@ -35,8 +36,8 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { defineComponent, ref, onMounted, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import useApi from 'src/composables/UseApi'
 import useNotify from 'src/composables/UseNotify'
 
@@ -46,18 +47,42 @@ export default defineComponent({
 
     const table = 'Category'//lembrar que cadastrei no supabase como Category, o nome deve ser exato
     const router = useRouter()
-    const { post } = useApi()
+    const route = useRoute()
+    const { post, getById, update } = useApi()
     const { notifyError, notifySuccess } = useNotify()
 
+    const isUpdate = computed(() => route.params.id)
+
+    let category = {}
     const form = ref({
       name: ''
     })
 
+    onMounted(() => {
+      if (isUpdate.value) {
+        handleGetCategory(isUpdate.value)
+      }
+    })
+
     const handleSubmit = async () => {
       try {
-        await post(table, form.value)
-        notifySuccess('Categoria Cadastrada')
+        if (isUpdate.value) {
+          await update(table, form.value)
+          notifySuccess('Categoria Atualizada')
+        } else {
+          await post(table, form.value)
+          notifySuccess('Categoria Cadastrada')
+        }
         router.push({ name: 'category'})
+      } catch (error) {
+        notifyError(error.message)
+      }
+    }
+
+    const handleGetCategory = async (id) =>{
+      try {
+        category = await getById(table, id)
+        form.value = category
       } catch (error) {
         notifyError(error.message)
       }
@@ -65,7 +90,8 @@ export default defineComponent({
 
     return {
       handleSubmit,
-      form
+      form,
+      isUpdate
     }
   },
 })
