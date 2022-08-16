@@ -14,21 +14,21 @@
         />
 
         <q-editor 
-          v-model="description" 
+          v-model="form.description" 
           min-height="5rem" 
         />
 
         <q-input 
           label="Amount"
           v-model="form.amount"
-          :rules="[val => (val && val.length > 0 ) || 'Amount é obrigatório']"
+          :rules="[val => !!val || 'Amount é obrigatório']"
           type="number"
         />
 
         <q-input 
           label="Price"
           v-model="form.price"
-          :rules="[val => (val && val.length > 0) || 'O Price é obrigatório']"
+          :rules="[val => !!val || 'O Price é obrigatório']"
           prefix="R$"
         />
 
@@ -40,6 +40,7 @@
           option-label="name"
           map-options
           emit-value
+          :rules="[val => !!val || 'A categoria é obrigatória']"
         />
 
         <q-btn 
@@ -107,10 +108,10 @@ export default defineComponent({
       try {
         if (isUpdate.value) {
           await update(table, form.value)
-          notifySuccess('Categoria Atualizada')
+          notifySuccess('Produto Atualizado')
         } else {
           await post(table, form.value)
-          notifySuccess('Categoria Cadastrada')
+          notifySuccess('Produto Cadastrado')
         }
         router.push({ name: 'product'})
       } catch (error) {
